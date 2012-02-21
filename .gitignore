@@ -1,0 +1,75 @@
+# This file is used to ignore files which are generated
+# ----------------------------------------------------------------------------
+
+
+*.[oa]
+*~
+*.a
+*.core
+*.moc
+*.o
+*.obj
+*.orig
+*.rej
+*.so
+*_pch.h.cpp
+*_resource.rc
+*.qm
+.#*
+*.*#
+core
+.qmake.cache
+tags
+.DS_Store
+*.debug
+Makefile*
+*.pro.user
+*.prl
+*.app
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+
+# xemacs temporary files
+*.flc
+
+# Vim temporary files
+.*.swp
+
+# Visual Studio generated files
+*.ib_pdb_index
+*.idb
+*.ilk
+*.pdb
+*.sln
+*.suo
+*.vcproj
+*vcproj.*.*.user
+*.ncb
+
+# MinGW generated files
+*.Debug
+*.Release
+
+# Directories to ignore
+# ---------------------
+
+debug
+include/*
+include/*/*
+lib/*
+plugins/*/*
+release
+qtc-gdbmacros
+tmp
+.rcc
+.pch
+
+# Binaries
+# --------
+bin/*.dll
+asynchdb
+asynchdb.bin
+asynchdb.exe
+bin/asynchdb.bin
+bin/asynchdb.exe
