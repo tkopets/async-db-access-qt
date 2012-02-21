@@ -14,10 +14,10 @@ Worker::Worker( QObject* parent )
     : QObject( parent )
 {
     // thread-specific connection, see db.h
-    m_database = QSqlDatabase::addDatabase( DATABASE_DRIVER, 
+    m_database = QSqlDatabase::addDatabase( DATABASE_DRIVER,
                                             "WorkerDatabase" ); // named connection
     m_database.setDatabaseName( DATABASE_NAME );
-    m_database.setHostName( DATABASE_HOST );    
+    m_database.setHostName( DATABASE_HOST );
     if ( !m_database.open() )
     {
         qWarning() << "Unable to connect to database, giving up:" << m_database.lastError().text();

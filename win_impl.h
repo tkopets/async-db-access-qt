@@ -5,27 +5,28 @@
 #include <QList>
 #include <QSqlRecord>
 #include "ui_win.h"
+#include "sqlrecmodel.h"
 
 class QueryThread;
 
 class Win : public QWidget,
-            protected Ui::win
+        protected Ui::win
 {
     Q_OBJECT
-  public:
+public:
     Win( QWidget* parent = 0 );
     ~Win();
 
-  signals:
+signals:
     void exec(const QString &);
 
-  private slots:
+private slots:
     void slotGo();
     void slotResults(const QString &qId, const QList<QSqlRecord> &records);
 
-  private:
+private:
     QueryThread* m_querythread;
-
+    SqlRecModel *m_model;
     void dispatch(const QString &qId, const QString &query);
 };
 

@@ -1,7 +1,9 @@
 #include "win_impl.h"
 #include "querythread.h"
+#include "db.h"
 
 #include <QDebug>
+#include <QDateTime>
 
 Win::Win( QWidget* parent )
     : QWidget(parent)
@@ -27,6 +29,8 @@ Win::Win( QWidget* parent )
     // Launch worker thread
     m_querythread->start();
     
+    m_model = new SqlRecModel(this);
+    tableView->setModel(m_model);
 }
 
 Win::~Win()
@@ -34,20 +38,26 @@ Win::~Win()
     m_querythread->quit();
     m_querythread->wait();
     delete m_querythread;
+    delete m_model;
 }
 
 void Win::slotGo()
 {
-    textBrowser->append( "Running queries, please wait..." );
-    dispatch("1", "select avg(id) from item;" );
-    dispatch("2", "select name from item;" );
-    dispatch("3", "select min(id) from item;" );
-    dispatch("4", "select max(id) from item;" );
-    dispatch("5", "select distinct(id) from item;" );
+    qsrand(QDateTime::currentMSecsSinceEpoch());
+    int rand = qrand() % (SAMPLE_RECORDS - 100);
+
+
+    textBrowser->append("Running queries, please wait...");
+    dispatch("1", "select avg(id) from item;");
+    dispatch("2", "select name from item;");
+    dispatch("3", "select min(id) from item;");
+    dispatch("4", "select max(id) from item;");
+    dispatch("5", "select distinct(id) from item;");
     m_querythread->prepare("6", "SELECT * FROM item WHERE id = :value");
     m_querythread->bindValue("6", ":value", 10);
     m_querythread->execute("6");
-    textBrowser->append("Dispatched all queries.");
+    dispatch("model", QString("select id, name from item limit 100 offset %1").arg(rand) );
+    textBrowser->append("Dispatched all queries.\n");
 }
 
 void Win::dispatch(const QString &qId, const QString &query)
@@ -71,5 +81,7 @@ void Win::slotResults(const QString &qId, const QList<QSqlRecord> &records)
             textBrowser->append(QString("%1: %2,%3").arg(qId, rec.value(0).toString(), rec.value(1).toString() ));
         }
     }
+
+    m_model->setRecordList(records);
 }
 
