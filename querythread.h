@@ -22,22 +22,23 @@ public:
     ~Worker();
 
 public slots:
-    void slotExecute(const QString &qId, const QString &sql = QString());
-    void slotPrepare(const QString &qId, const QString &sql);
-    void slotBindValue(const QString &qId, const QString &placeholder, const QVariant &val);
+    void slotExecute(const QString &queryId, const QString &sql);
+    void slotExecutePrepared(const QString &queryId, const QString &resultId = QString());
+    void slotPrepare(const QString &queryId, const QString &sql);
+    void slotBindValue(const QString &queryId, const QString &placeholder, const QVariant &val);
 
 signals:
-    void executed(const QString &qId);
-    void executeFailed(const QString &qId, const QSqlError &err);
-    void prepared(const QString &qId);
-    void prepareFailed(const QString &qId, const QSqlError &err);
-    void results(const QString &qId, const QList<QSqlRecord> &records);
+    void executed(const QString &queryId, const QString &resultId);
+    void executeFailed(const QString &queryId, const QSqlError &err, const QString &resultId);
+    void prepared(const QString &queryId);
+    void prepareFailed(const QString &queryId, const QSqlError &err);
+    void results(const QString &queryId, const QList<QSqlRecord> &records, const QString &resultId);
 
 private:
     QSqlDatabase m_database;
     QHash<QString, QSqlQuery*> m_queries;
-    void executeOneTime(const QString &qId, const QString &sql);
-    void executePrepared(const QString &qId);
+    void executeOneTime(const QString &queryId, const QString &sql);
+    void executePrepared(const QString &queryId, const QString &resultId = QString());
 };
 
 
@@ -49,26 +50,28 @@ public:
     QueryThread(QObject *parent = 0);
     ~QueryThread();
 
-    void execute(const QString &qId, const QString &sql = QString());
-    void prepare(const QString &qId, const QString &sql);
-    void bindValue(const QString &qId, const QString &placeholder, const QVariant &val);
+    void execute(const QString &queryId, const QString &sql);
+    void executePrepared(const QString &queryId, const QString &resultId = QString());
+    void prepare(const QString &queryId, const QString &sql);
+    void bindValue(const QString &queryId, const QString &placeholder, const QVariant &val);
 
 signals:
     void progress( const QString &msg);
     void ready(bool);
-    void executed(const QString &qId);
-    void executeFailed(const QString &qId, const QSqlError &err);
-    void prepared(const QString &qId);
-    void prepareFailed(const QString &qId, const QSqlError &err);
-    void results(const QString &qId, const QList<QSqlRecord> &records);
+    void executed(const QString &queryId, const QString &resultId);
+    void executeFailed(const QString &queryId, const QSqlError &err, const QString &resultId);
+    void prepared(const QString &queryId);
+    void prepareFailed(const QString &queryId, const QSqlError &err);
+    void results(const QString &queryId, const QList<QSqlRecord> &records, const QString &resultId);
 
 protected:
     void run();
 
 signals:
-    void fwdExecute(const QString &qId, const QString &sql = QString());
-    void fwdPrepare(const QString &qId, const QString &sql);
-    void fwdBindValue(const QString &qId, const QString &placeholder, const QVariant &val);
+    void fwdExecute(const QString &queryId, const QString &sql);
+    void fwdExecutePrepared(const QString &queryId, const QString &resultId = QString());
+    void fwdPrepare(const QString &queryId, const QString &sql);
+    void fwdBindValue(const QString &queryId, const QString &placeholder, const QVariant &val);
 
 private:
     Worker *m_worker;

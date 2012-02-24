@@ -22,12 +22,12 @@ signals:
 
 private slots:
     void slotGo();
-    void slotResults(const QString &qId, const QList<QSqlRecord> &records);
+    void slotResults(const QString &queryId, const QList<QSqlRecord> &records, const QString &resultId);
 
 private:
     QueryThread* m_querythread;
     SqlRecModel *m_model;
-    void dispatch(const QString &qId, const QString &query);
+    void dispatch(const QString &queryId, const QString &query);
 };
 
 

@@ -23,8 +23,8 @@ Win::Win( QWidget* parent )
              textBrowser, SLOT(append(QString)) );
     connect( m_querythread, SIGNAL( ready(bool) ),
              goButton, SLOT( setEnabled(bool) ) );
-    connect( m_querythread, SIGNAL(results(QString,QList<QSqlRecord>)),
-             this, SLOT(slotResults(QString,QList<QSqlRecord>)) );
+    connect( m_querythread, SIGNAL(results(QString,QList<QSqlRecord>,QString)),
+             this, SLOT(slotResults(QString,QList<QSqlRecord>,QString)) );
 
     // Launch worker thread
     m_querythread->start();
@@ -55,32 +55,24 @@ void Win::slotGo()
     dispatch("5", "select distinct(id) from item;");
     m_querythread->prepare("6", "SELECT * FROM item WHERE id = :value");
     m_querythread->bindValue("6", ":value", 10);
-    m_querythread->execute("6");
+    m_querythread->executePrepared("6");
     dispatch("model", QString("select id, name from item limit 100 offset %1").arg(rand) );
     textBrowser->append("Dispatched all queries.\n");
 }
 
-void Win::dispatch(const QString &qId, const QString &query)
+void Win::dispatch(const QString &queryId, const QString &query)
 {
-    textBrowser->append(qId +  ":: Executing:" + query);
-    m_querythread->execute(qId, query);
+    textBrowser->append(queryId +  ":: Executing:" + query);
+    m_querythread->execute(queryId, query);
 }
 
 
-void Win::slotResults(const QString &qId, const QList<QSqlRecord> &records)
+void Win::slotResults(const QString &queryId, const QList<QSqlRecord> &records, const QString &resultId)
 {
-    textBrowser->append( QString(qId+":: Result count:%1").arg(records.size()) );
+    textBrowser->append( QString("RESULTS: queryId: %1, resultId: %2, count: %3").arg(queryId).arg(resultId).arg(records.size()) );
 
-    if (records.size() > 10) {
-        textBrowser->append("more than 10");
-    }
-    else {
-
-        for (int i = 0; i < records.size(); ++i) {
-            QSqlRecord rec = records.at(i);
-            textBrowser->append(QString("%1: %2,%3").arg(qId, rec.value(0).toString(), rec.value(1).toString() ));
-        }
-    }
+    if (records.size() == 1)
+        qDebug() << records.at(0);;
 
     m_model->setRecordList(records);
 }
